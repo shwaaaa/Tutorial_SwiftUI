@@ -74,4 +74,45 @@ struct ContentView: View{
 ```
 ***
 - Alert property에 let 과 return 값으로 경고 메세지가 나왔을때, 두가지의 버튼을 만들 수 있습니다.
-
+```swift
+.alert(isPresented: $___) {
+    let SomeButton1 = Alert.Button.default(Text("하2")) {
+        //printf("primary button pressed")
+    }
+    let SomeButton2 = Alert.Button.cancle(Text("빠2")) {
+        //print("secondary button pressed")
+    }
+    return Alert(title: Text("이승화!"), message: Text("하2 빠2"), primaryButton: SomeButton1Button, secondaryButton: SomeButton2Button)
+}
+```
+`전체 코드`
+```swift
+struct ContentView: View {
+    //showAlert의 bool 타입을 false로 설정
+    @State private var showingAlert = false
+    
+    var body: some View {
+        
+        Button("Alert 메세지") {
+            self.showingAlert.toggle()
+        }
+        .foregroundColor(.white)
+        .padding()
+        //그라데이션
+        .background(LinearGradient(gradient: Gradient(colors: [Color.red, Color.blue]), startPoint: .leading, endPoint: .trailing))    
+        .cornerRadius(30)
+        .font(.system(size: 30))
+        .alert(isPresented: $showingAlert) {
+            let firstButton = Alert.Button.default(Text("하2")) {
+                print("primary button pressed")
+            }
+            let secondButton = Alert.Button.cancel(Text("빠2")) {
+                print("secondary button pressed")
+            }
+            return Alert(title: Text("이승화!"),
+                         message: Text("하2 빠2"),
+                         primaryButton: firstButton, secondaryButton: secondButton)
+        }
+    }
+}
+```
