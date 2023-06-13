@@ -88,3 +88,33 @@ struct actionSheet: View {
     }
 }
 ```
+***
+**ActionSheetOption**
+-------
+- 만약 Instrgrame 같은 어플에서 오른쪽에 더보기 버튼을 누르면 공유, 삭제, 신고 버튼을 나타나게 하고 또 다른 옵션으로는 내 게시물일 때와 다른 사람의 게시물일 때를 다르게 나오게 해 줄 수 있습니다.
+
+- 인스타그램 같은 게시글 뷰
+```swift
+import SwiftUI
+
+struct actionSheet: View {
+    @State var showActionSheet: Bool = false
+    
+    var body: some View {
+
+        VStack {
+            HStack {
+                circle()
+                .frame(width: 30, heigh: 30)
+            Text("@2is.hwa")
+            Spacer()
+
+            Button(action: {
+                showActionSheet.toggle()
+            }) {
+                Image
+            }
+            }
+        }
+    }
+}
