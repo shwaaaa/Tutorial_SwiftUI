@@ -176,3 +176,65 @@ func getActionSheet() -> ActionSheet{
     }
 }
 ```
+- 이렇게 함수를 만들어 줬고 다음으로는 body의 button action부분에 actionSheetOption =. isMyPost 또는 .isOtherPost를 정해주고 actionSheet수정자에 getActionSheet를 넣어준다.
+```swift
+import SwiftUI
+
+//body
+struct actionSheet: View {
+    @State var showActionSheet: Bool = false
+    @State var actionSheetOption: ActionSheetOption = .isOtherPost
+    
+    enum ActionSheetOption {
+        case isMyPost
+        case isOtherPost
+    }
+    
+    var body: some View {
+        
+        VStack {
+            HStack {
+                Circle()
+                    .frame(width: 30, height: 30)
+                Text("@Seogun")
+                Spacer()
+                
+                Button(action: {
+                    actionSheetOption = .isMyPost
+                    showActionSheet.toggle()
+                }) {
+                    Image(systemName: "ellipsis")
+                }
+                .actionSheet(isPresented: $showActionSheet, content: getActionSheet)
+                
+            }
+            .padding(.horizontal)
+            
+            Image("book")
+                .aspectRatio(1.0, contentMode: .fit)
+        }
+    }
+    
+    //함수구현부
+    func getActionSheet() -> ActionSheet {
+        
+        let title = Text("원하는 옵션을 선택해주세요.")
+        let shareButton: ActionSheet.Button = .default(Text("공유"))
+        let reportButton: ActionSheet.Button = .destructive(Text("신고"))
+        let deleteButton: ActionSheet.Button = .destructive(Text("게시물 삭제"))
+        let cancleButton: ActionSheet.Button = .cancel()
+        
+        switch actionSheetOption {
+        case .isMyPost:
+            return ActionSheet(title: title,
+                               message: nil,
+                               buttons: [shareButton, reportButton, deleteButton, cancleButton])
+            
+        case .isOtherPost:
+            return ActionSheet(title: title,
+                               message: nil,
+                               buttons: [shareButton, reportButton, cancleButton])
+        }
+    }
+}
+```
