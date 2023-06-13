@@ -91,7 +91,7 @@ struct actionSheet: View {
 ***
 **ActionSheetOption**
 -------
-- 만약 Instrgrame 같은 어플에서 오른쪽에 더보기 버튼을 누르면 공유, 삭제, 신고 버튼을 나타나게 하고 또 다른 옵션으로는 내 게시물일 때와 다른 사람의 게시물일 때를 다르게 나오게 해 줄 수 있습니다.
+- 만약 Instrgrame 같은 어플에서 오른쪽에 더보기 버튼을 누르면 공유, 삭제, 신고 버튼을 나타나게 하고 또 다른 옵션으로는 내 게시물일 때와 다른 사람의 게시물일 때를 다르게 나오게 해 줄 수 있다.
 
 - 인스타그램 같은 게시글 뷰
 ```swift
@@ -112,9 +112,67 @@ struct actionSheet: View {
             Button(action: {
                 showActionSheet.toggle()
             }) {
-                Image
+                Image(systemName: "ellipsis")
             }
+            .actionSheet(.isPresented: $showActionSheet, content: {
+                ActionSheet(title: Text("seunghwa"))
+            })
+
             }
+            .padding.(.horizontal)
+
+            Image("book")
+                .aspectRatio(1.0, contentMode: .fit)
         }
     }
 }
+```
+- 이제 ActionSheetOptions라는 enum을 만들어서 @State로 정한다.
+```swift
+struct actionSheet: View {
+    @State var showActionSheet: Bool = false
+    @State var actionSheetOption: ActionSheetOption = .isOtherPost
+    
+    enum ActionSheetOption {
+        case isMyPost
+        case isOtherPost
+    }
+
+    var body: some View{
+    }
+}
+```
+- 그리고 함수를 하나 더 만든다
+```swift
+func getActionSheet() -> ActionSheet{
+
+    let title = Text("원하는 옵션을 선택해주세요")
+    let shareButton: ActionSheet.Button = default(Text("공유"))
+    let reportButton: ActionSheet.Button = destructive(Text("신고"))
+    let deleteButton: ActionSheet.Button = destructive(Text("게시글 삭제"))
+    let cancleButton: ActionSheet.Button = .cancle()
+
+
+    return ActionSheet(title: title, message: nil, buttons: [])
+}
+```
+
+- 그리고 swich문을 사용하여 내 게시물 일 때와 다른 사람의 게시물 일 때의 조건을 다르게 해 준다.
+```swift
+func getActionSheet() -> ActionSheet{
+
+    let title = Text("원하는 옵션을 선택해주세요")
+    let shareButton: ActionSheet.Button = default(Text("공유"))
+    let reportButton: ActionSheet.Button = destructive(Text("신고"))
+    let deleteButton: ActionSheet.Button = destructive(Text("게시글 삭제"))
+    let cancleButton: ActionSheet.Button = .cancle()
+
+    switch actionSheetOption {
+        case .isMyPost:
+            return ActionSheet(title: title, message: nil, buttons: [shareButton, reportButton, deleteButton, cancleButton])
+
+        case . isOtherPost:
+            return ActionSheet(title: title, message: nil, buttons: [shareButton, reportButton, cancleButton])
+    }
+}
+```
