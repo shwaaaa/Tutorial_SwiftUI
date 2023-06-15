@@ -133,3 +133,43 @@ struct ContentView: View {
 **Animation bindings**
 --------
 - Stepper와 Animation 을 연동 시켜 stepper에 값을 줄 때마다 버튼의 크기를 조절 할 수 있습니다.
+```swift
+struct ContentView: View {
+
+    @State private var animationAmount: CGFloat = 1
+    
+    var body: some View {
+        VStack {
+            Stepper("Scale Amount", value: $animationAmount.animation(), in: 1...10)
+            
+            Spacer()
+            
+            Button("Tap Me") {
+                self.animationAmount += 1
+            }
+            .padding(40)
+            .background(Color.green)
+            .foregroundColor(.white)
+            .clipShape(Circle())
+            .scaleEffect(animationAmount)
+        }
+    }
+}
+```
+- stepper를 누를 때 마다 디버그에서 로그를 보고 싶을땐,
+```swift
+struct ContentView: View {
+    @State private var animationAmount: CGFloat = 1
+    
+    var body: some View {
+     print(animationAmount)  //print만 추가해주면 런을 할 수 없지만,
+ 
+        return VStack {    //return을 추가하면 정상적으로 런이 가능하다.
+            Stepper("Scale Amount", value: $animationAmount.animation(),
+                                                         in: 1...10)
+            
+     {...}
+```
+
+- 위에서 배운 Animation Custom 효과를 이용할 수 도 있습니다. Stepper의 animation()안쪽에 Animation 효과를 넣어주면 됩니다.
+***
