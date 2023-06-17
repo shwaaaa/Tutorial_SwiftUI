@@ -172,4 +172,75 @@ struct ContentView: View {
 ```
 
 - 위에서 배운 Animation Custom 효과를 이용할 수 도 있습니다. Stepper의 animation()안쪽에 Animation 효과를 넣어주면 됩니다.
+```swift
+struct ContentView: View {
+    @State private var animationAmount: CGFloat = 1
+    
+    var body: some View {
+        print(animationAmount)
+        return VStack {
+            Stepper("Scale Amount", value: $animationAmount.animation(
+                        Animation.easeInOut(duration: 1).repeatCount(3, autoreverses: true)),
+                    in: 1...10)
+            
+            Spacer()
+            
+            Button("Tap Me") {
+                self.animationAmount += 1
+            }
+            .padding(40)
+            .background(Color.green)
+            .foregroundColor(.white)
+            .clipShape(Circle())
+            .scaleEffect(animationAmount)
+        }
+    }
+}
+```
 ***
+**Creating explicit animations / 3D 효과 주기**
+------
+- 버튼을 탭하면 3D 효과로 회전하게 만드려고 합니다. 여기에는 rotation3DEffect()뷰가 회전하는 방식을 결정하는, 축뿐만 아니라 각도 단위의 회전량을 제공 할 수있는 또 다른 새로운 수정자가 필요합니다.
+> - X 축 (수평)을 통해 뷰를 기울이면 위에서 아래로 회전
+> - Y 축 (수직)을 통해 뷰를 기울이면 왼쪽에서 오른쪽으로 회전 할 수 있습니다.
+> - Z 축 (깊이)을 통해 뷰를 기울이면 왼쪽에서 오른쪽으로 회전 할 수 있습니다.
+
+- 이 작업을 수행하려면 수정할 수있는 상태가 필요하며 회전 각도는 Double 입니다.
+```swift
+@State private var animationAmount = 0.0
+```
+
+- 다음으로 버튼 `AnimationAmount`이 Y 축을 따라 각도 만큼 회전하도록 요청해야 합니다. 즉, 왼쪽에서 오른쪽으로 회전합니다.
+```swift
+rotation3DEffect(.degrees(animationAmount), axis: (x: 0, y: 1, z:0))
+```
+
+- 버튼의 동작에 코드를 추가하여 AnimationAmount를 탭할 때마다 '360'을 추가합니다.
+- `self.animationAmount += 360` 이것을 작성하면, 버튼에 Animation 수정자가 연결되어 있지 않았기 때문에  withAnimation()클로저를 버튼내에 할당해주고 사용하면 SwiftUI는 새 상태로 인한 모든 변경 사항이 자동으로 Animation되도록 읽어드립니다.
+```swift
+Button("Tap me") {
+    withAnimation {
+        self.animationAmount += 360
+    }
+}
+```
+```swift
+struct ContentView: View {
+    @State private var animationAmount = 0.0
+    
+    var body: some View {
+        Button("Tap me") {
+            withAnimation {
+                self.animationAmount += 360
+            }
+        }
+        .padding(40)
+        .background(Color.green)
+        .foregroundColor(.white)
+        .clipShape(Circle())
+        .rotation3DEffect(
+            .degrees(animationAmount),
+            axis: (x: 0.0, y: 1.0, z: 0.0))
+    }
+}
+```
