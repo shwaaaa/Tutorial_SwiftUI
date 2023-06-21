@@ -277,4 +277,64 @@ struct ContentView: View {
     }
 }
 ```
-- 
+- 이제 색만 변하게 하는게 심심하니 clipShape 를 추가해줘서 모양까지 바뀌게 하고싶은데 이것도 삼항연산자 사용해보겠습니다.
+- **단 animation 앞에 추가해야합니다!**
+- 여러 animation() 수정자를 적용하면 각 수정자가 다음 Animation까지 모든 것을 제어합니다. 이를 통해 모든 속성에 대해 균일하지 않고 모든 종류의 다른 방식으로 상태 변경을 Animation 할 수 있습니다. 예를 들어, 기본 Animation으로 색상을 변경할 수 있지만, 클립 모양에 보간 스프링을 사용할 수 있습니다.
+```swift
+struct ContentView: View {
+    @State private var animationAmount: Bool = false
+    
+    var body: some View {
+        Button("Tap Me") {
+            self.animationAmount.toggle()
+        }
+        .frame(width: 200, height: 200, alignment: .center)
+        .background(animationAmount ? Color.green : Color.yellow)
+        .foregroundColor(animationAmount ? Color.white : Color.black )
+        .animation(.default)
+        .clipShape(RoundedRectangle(cornerRadius: animationAmount ? 60 : 0))
+        /* 위에 이미 애니메이션 효과를 줬지만, 애니메이션 효과를 한번 더 주면서 
+                                       클릭시 덤핑 하는 효과를 한번 더 준다 */
+        .animation(.interpolatingSpring(stiffness: 50, damping: 1))
+    }
+}
+```
+- 만약, 버튼을 클릭하여 Animation이 적용되고 있는 도중 버튼을 한번더 클릭해서 취소 시키고 싶다고 버튼을 클릭하면, .animation(.default) 값은 취소될 때에도 에니메이션 효과를 주면서 바뀌지만, `.animation(nil)` 값을 주면 바로 중단됩니다.
+```swift
+.animation(nil)
+```
+
+***
+
+**뷰가 표시되고 숨겨지는 효과 만들기 (IF 문)**
+-----------
+- SwiftUI의 가장 강력한 기능 중 하나는 뷰가 표시되고 숨겨지는 방식을 사용자 지정하는 기능입니다. 이것은 If문을 활용하여 Animation효과를 보여줄 수 있습니다. 우선 해볼것은 버튼을 누를때 빨간색 사각형이 보이게 화면 코드를 작성해야합니다.
+```swift
+struct ContentView: View {                       
+   @State private var isShowingRed = false
+    var body: some View {
+        
+        VStack {
+            Button("Tap Me!") {
+                self.isShowingRed.toggle()
+            }
+            //만약 isShowingRed 일 때, 빨간색 사각형
+            if isShowingRed {
+                Rectangle()
+                    .fill(Color.red)
+                    .frame(width: 200, height: 200)
+            }
+        }
+    }
+}
+```
+- 이렇게만 작성하면 "Tap Me!" 를 눌렀을때 빨간상자가 나타나게 됩니다. 여기서 버튼에 애니메Animation withAnimation 효과를 추가해봅시다.
+```swift
+VStack {
+            Button("Tap Me!") {
+                withAnimation {
+                    self.isShowingRed.toggle()
+                }
+            }
+}
+```
