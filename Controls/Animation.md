@@ -244,3 +244,37 @@ struct ContentView: View {
     }
 }
 ```
+***
+**animation stack 컨트롤**
+------
+- 우선 @State 에 bool 값을 할당해 준 후, 버튼 액션을 toggle로 설정한다.
+```swift
+struct ContentView: View {
+    
+    @State private var animationAmount = false
+
+    var body: some View {
+        Button("Tap Me") {
+            self.animationAmount.toggle()
+        }
+        //background 보다 frame이 먼저 와야 한다.
+        .frame(width: 200, height: 200)
+        .background(Color.blue)
+        .foregroundColor(.white)
+    }
+}
+```
+- 이제 background 와 foregroundColor에 삼항연산자를 넣어줘야 하는데 이 연산자로 인해서 버튼을 클릭할 때, animationAmount가 true이면 '초록색'  false 이면 '노란색' 이 되로록 만들어 본다. 글씨색 또한 같은 방법으로 수정해주시고, 밑에 Animation 효과를 부여한다.
+```swift
+        Button("Tap Me") {
+            self.animationAmount.toggle()
+        }
+        .frame(width: 200, height: 200)
+        .background(.animationAmount ? Color.green : Color.yellow)
+        .foregroundColor(.animationAmount ? Color.white : Color.black)
+        //Mark: 애니메이션 효과
+        .animation(.default)
+    }
+}
+```
+- 
