@@ -328,7 +328,7 @@ struct ContentView: View {
     }
 }
 ```
-- 이렇게만 작성하면 "Tap Me!" 를 눌렀을때 빨간상자가 나타나게 됩니다. 여기서 버튼에 애니메Animation withAnimation 효과를 추가해봅시다.
+- 이렇게만 작성하면 "Tap Me!" 를 눌렀을때 빨간상자가 나타나게 됩니다. 여기서 버튼에 Animation withAnimation 효과를 추가해봅시다.
 ```swift
 VStack {
             Button("Tap Me!") {
@@ -337,4 +337,141 @@ VStack {
                 }
             }
 }
+```
+
+***
+
+**Animation.default**
+----------
+- 각 `RoundedRectangle`에 삼항연산자를 사용해서 값을 넣어줬고 overlay를 사용하여 어느 효과를 부여받고 있는지 보기 좋게 텍스를 적어줬다.
+```swift
+import SwiftUI
+
+struct ContentView: View {
+    @State var animate: Bool = false
+    let timing: Double = 10.0
+    var body: some View {
+        VStack {
+            Button("애니메이션") {
+                animate.toggle()
+            }
+            RoundedRectangle(cornerRadius: 20)
+                .frame(width: animate ? 300 : 200, height: 100)
+                .overlay(
+                    Text("animation : default")
+                        .foregroundColor(Color.white)
+                )
+                .animation(Animation.default)
+            
+            RoundedRectangle(cornerRadius: 20)
+                .frame(width: animate ? 300 : 200, height: 100)
+                .overlay(
+                    Text("animation : easeOut")
+                        .foregroundColor(Color.white)
+                )
+                .animation(Animation.easeOut(duration: timing))
+            
+            RoundedRectangle(cornerRadius: 20)
+                .frame(width: animate ? 300 : 200, height: 100)
+                .overlay(
+                    Text("animation : easeIn")
+                        .foregroundColor(Color.white)
+                )
+                .animation(Animation.easeIn(duration: timing))
+            
+            RoundedRectangle(cornerRadius: 20)
+                .frame(width: animate ? 300 : 200, height: 100)
+                .overlay(
+                    Text("animation : linear")
+                        .foregroundColor(Color.white)
+                )
+                .animation(Animation.linear(duration: timing))  
+        }
+    }
+}
+```
+- default는 지연(duration) 효과를 주지 않았기 때문에 제일 빠르다
+- 순서는 default > EaseOut > linear > EaseIn 순으로 빠른것을 확인할 수 있다.
+
+***
+
+**Animation.Spring / animation(.none)**
+--------
+- Spring은 default와 비슷해 보이지만 조금 더 자연스럽다. 그리고 duration효과가 필요하지 않는다. 마찬가지로 default와 비교해보자.
+```swift
+struct ContentView: View {
+    @State var animate: Bool = false
+    var body: some View {
+        VStack {
+            Button("애니메이션") {
+                animate.toggle()
+            }
+            
+            RoundedRectangle(cornerRadius: 20)
+                .frame(width: animate ? 300 : 50, height: 100)
+                .overlay(
+                    Text("Spring")
+                        .font(animate ? .headline : .caption)
+                        .foregroundColor(Color.white)
+                        //텍스트 애니메이션 미적용
+                        .animation(.none)
+                    
+                )
+                .animation(Animation.spring())
+            
+            RoundedRectangle(cornerRadius: 20)
+                .frame(width: animate ? 300 : 50, height: 100)
+                .overlay(
+                    Text("default")
+                        .font(animate ? .headline : .caption)
+                        .foregroundColor(Color.white)
+                )
+                .animation(Animation.default)
+        }
+    }
+}
+```
+- 여기서 Text의 크기도 삼항 연산자로 넣어줬는데 Text까지 애니메이션이 적용되어 보기 좋지 않다. 이럴 때 부분적으로 애니메이션을 적용시키지 않게 해주려면 바로 `animation(.none)`만 원하는 위치에 넣어주면 된다.
+***
+- spring에도 여러가지 기능을 넣을 수 있다.
+```swift
+RoundedRectangle(cornerRadius: 20)
+    .frame(width: animate ? 300 : 50, height: 100)
+    .overlay(
+        Text("Spring")
+            .font(animate ? .headline : .caption)
+            .foregroundColor(Color.white)
+            //텍스트 애니메이션 미적용
+            .animation(.none)
+        
+    )
+    .animation(Animation.spring(
+                // 몇초에 걸쳐서 작동시킬지
+                response: 3.0,
+                // damping 비율 할지
+                dampingFraction: 0.3,
+                // 블랜드시간 기본 1로 지정
+                blendDuration: 1.0)
+    )
+
+```
+```swift
+RoundedRectangle(cornerRadius: 20)
+    .frame(width: animate ? 300 : 50, height: 100)
+    .overlay(
+        Text("Spring")
+            .font(animate ? .headline : .caption)
+            .foregroundColor(Color.white)
+            //텍스트 애니메이션 미적용
+            .animation(.none)
+        
+    )
+    .animation(Animation.spring(
+                // 몇초에 걸쳐서 작동시킬지
+                response: 0.5,
+                // 얼마나 덤핑 할지
+                dampingFraction: 0.7,
+                // 블랜드시간 기본 1로 지정
+                blendDuration: 1.0)
+    )
 ```
